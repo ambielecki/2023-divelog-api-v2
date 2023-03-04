@@ -8,6 +8,8 @@ Class DiveCalculator
 {
     const MESSAGE_DEPTH_OUTSIDE_RECREATIONAL_LIMIT = 'Depth is outside recreational limits';
     const MESSAGE_TIME_OUTSIDE_RECREATIONAL_LIMIT = 'Time is outside recreational limits at specified depth';
+    const MESSAGE_INVALID_PRESSURE_GROUP = 'Pressure group must be a single letter';
+    const MESSAGE_BOTTOM_TIME_ZERO_OR_LOWER = 'You have no allowable bottom time';
 
     private array $table_depths = [35, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140];
 
@@ -91,7 +93,7 @@ Class DiveCalculator
      * @return  string
      * @throws DiveException
      */
-    public  function getPressureGroup(int $depth, int $time, int $residual_time = 0): string
+    public function getPressureGroup(int $depth, int $time, int $residual_time = 0): string
     {
         $time += $residual_time;
         $depth_key = null;
@@ -121,6 +123,77 @@ Class DiveCalculator
         }
 
         return $pressure_group;
+    }
+
+    /**
+     * @param   string $starting_group Pressure group from table 1
+     * @param   int $surface_interval time between dives in minutes
+     * @return  ?string  new PG or no residual message
+     * @throws DiveException
+     */
+    public function getNewPressureGroup(string $starting_group, int $surface_interval): ?string
+    {
+        if (!ctype_alpha($starting_group) || strlen($starting_group) !== 1) {
+            throw new DiveException(self::MESSAGE_INVALID_PRESSURE_GROUP);
+        }
+
+        $starting_group = strtoupper($starting_group);
+        $pressure_groups = $this->getTableGroups();
+        $table_times = $this->getTableTwo();
+        $times = $table_times[strtoupper($starting_group)];
+        $group_key = null;
+        foreach ($times as $key => $time) {
+            if ($time < $surface_interval) {
+                $group_key = $key;
+                break;
+            }
+        }
+        if ($group_key) {
+            return $pressure_groups[$group_key - 1];
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * @param   int $depth dive depth
+     * @param   int $residual_time optional residual nitrogen time from previous dive
+     * @return  mixed
+     * @throws  DiveException
+     */
+    public function getMaxBottomTime(int $depth, int $residual_time = 0): int
+    {
+        $table_depths = $this->getTableDepths();
+        $depth_key = null;
+        foreach ($table_depths as $key => $table_depth) {
+            if ($depth <= $table_depth) {
+                $depth_key = $key;
+                break;
+            }
+        }
+
+        if ($depth_key === null) {
+            throw new DiveException(self::MESSAGE_DEPTH_OUTSIDE_RECREATIONAL_LIMIT);
+        }
+
+        $max_time = 0;
+        $table_groups = $this->getTableOne();
+
+        foreach ($table_groups as $group) {
+            if (isset($group[$depth_key])) {
+                $max_time = $group[$depth_key];
+            } else {
+                break;
+            }
+        }
+
+        $return_time = $max_time - $residual_time;
+
+        if ($return_time <= 0) {
+            throw new DiveException(self::MESSAGE_BOTTOM_TIME_ZERO_OR_LOWER);
+        }
+
+        return $return_time;
     }
 
     public function getTableDepths(): array
