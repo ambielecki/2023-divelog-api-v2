@@ -25,7 +25,7 @@ return [
     | This value determines the "environment" your application is currently
     | running in. This may determine how you prefer to configure various
     | services the application utilizes. Set this in your ".env" file.
-    |
+    |p
     */
 
     'env' => env('APP_ENV', 'production'),
@@ -181,6 +181,7 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
+        Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
 
         /*
          * Package Service Providers...
@@ -212,4 +213,5 @@ return [
         // 'ExampleClass' => App\Example\ExampleClass::class,
     ])->toArray(),
 
+    'default_password' => env('DEFAULT_PASSWORD', 'Ch@ng3m3'),
 ];
