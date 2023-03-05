@@ -39,7 +39,7 @@ class DiveCalculatorRequest extends FormRequest
      * forces all responses to json for validation - does not need Accepts: application/json header
      */
     protected function failedValidation(Validator $validator) {
-        throw new HttpResponseException(response()->json([
+        throw new HttpResponseException(response()->json(
             JsonResponseData::formatData(
                 $this,
                 'Validation Failed',
@@ -48,6 +48,6 @@ class DiveCalculatorRequest extends FormRequest
                     'errors' => $validator->errors(),
                     'status' => true,
                 ])
-        ], 422));
+        , 422));
     }
 }

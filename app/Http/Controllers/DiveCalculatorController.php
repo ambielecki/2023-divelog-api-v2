@@ -21,8 +21,8 @@ class DiveCalculatorController extends Controller
             $request->input('dive_2_time') ?: null,
         );
 
-        return response()->json([
+        return response()->json(
             JsonResponseData::formatData($request, 'DiveCalculation', Message::MESSAGE_OK, $calculation)
-        ]);
+        );
     }
 }

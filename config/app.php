@@ -214,4 +214,6 @@ return [
     ])->toArray(),
 
     'default_password' => env('DEFAULT_PASSWORD', 'Ch@ng3m3'),
+    'test_user_email' => env('TEST_USER_EMAIL', 'testy@test.com'),
+    'test_user_password' => env('TEST_USER_PASSWORD', 'foobarfizzbuzz'),
 ];
