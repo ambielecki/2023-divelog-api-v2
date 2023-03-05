@@ -31,3 +31,5 @@ Route::group(['middleware' => ['auth:api']], function () {
 });
 
 Route::get('/dive-calculation', [Controllers\DiveCalculatorController::class, 'getCalculation']);
+Route::get('/page/home', [Controllers\PageController::class, 'getHomePage']);
+Route::get('/page/{id}', [Controllers\PageController::class, 'getPage']);
