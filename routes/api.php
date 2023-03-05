@@ -29,3 +29,5 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::post('/password', [Controllers\ApiUserController::class, 'postResetPassword']);
     Route::post('/logout', [Controllers\ApiAuthController::class, 'postLogout']);
 });
+
+Route::get('/dive-calculation', [Controllers\DiveCalculatorController::class, 'getCalculation']);

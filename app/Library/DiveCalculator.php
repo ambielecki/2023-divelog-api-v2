@@ -10,6 +10,7 @@ Class DiveCalculator
     const MESSAGE_TIME_OUTSIDE_RECREATIONAL_LIMIT = 'Time is outside recreational limits at specified depth';
     const MESSAGE_INVALID_PRESSURE_GROUP = 'Pressure group must be a single letter';
     const MESSAGE_BOTTOM_TIME_ZERO_OR_LOWER = 'You have no allowable bottom time';
+    const MESSAGE_OFF_REPETITIVE_DIVE_CHART = 'Off repetitive dive chart';
 
     private array $table_depths = [35, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140];
 
@@ -85,6 +86,84 @@ Class DiveCalculator
         120 => [3, 5, 6, 7, 8, 9, 10, 11, 12, 12, 13],
         130 => [3, 5, 6, 7, 8, 8, 9, 10],
     ];
+
+    public function handleApiRequest(
+        ?int $dive_1_depth,
+        ?int $dive_1_time,
+        ?int $surface_interval,
+        ?int $dive_2_depth,
+        ?int $dive_2_time,
+    ): array
+    {
+        $return_data = [
+            'dive_1_max_time' => null,
+            'dive_1_pg'       => null,
+            'post_si_pg'      => null,
+            'rnt'             => null,
+            'dive_2_max_time' => null,
+            'dive_2_pg'       => null,
+        ];
+
+        $continue = true;
+
+        if ($dive_1_depth) {
+            try {
+                $return_data['dive_1_max_time'] = $this->getMaxBottomTime($dive_1_depth);
+            } catch (DiveException $exception) {
+                $return_data['dive_1_max_time'] = $exception->getMessage();
+            }
+        }
+
+        if ($dive_1_depth && $dive_1_time) {
+            try {
+                $return_data['dive_1_pg'] = $this->getPressureGroup($dive_1_depth, $dive_1_time);
+            } catch (DiveException $exception) {
+                $return_data['dive_1_pg'] = $exception->getMessage();
+                $continue = false;
+            }
+        }
+
+        if ($continue && $return_data['dive_1_pg'] && $surface_interval) {
+            try {
+                $return_data['post_si_pg'] = $this->getNewPressureGroup($return_data['dive_1_pg'], $surface_interval);
+            } catch (DiveException $exception) {
+                $return_data['post_si_pg'] = $exception->getMessage();
+                $continue = false;
+            }
+        }
+
+        if ($continue && $dive_2_depth) {
+            if (is_null($return_data['post_si_pg'])) {
+                $return_data['rnt'] = 0;
+            } else {
+                try {
+                    $return_data['rnt'] = $this->getResidualNitrogenTime($return_data['post_si_pg'], $dive_2_depth);
+                } catch (DiveException $exception) {
+                    $return_data['rnt'] = $exception->getMessage();
+                    $continue = false;
+                }
+            }
+
+            if ($continue) {
+                try {
+                    $return_data['dive_2_max_time'] = $this->getMaxBottomTime($dive_2_depth, $return_data['rnt']);
+                } catch (DiveException $exception) {
+                    $return_data['dive_2_max_time'] = $exception->getMessage();
+                    $continue = false;
+                }
+            }
+        }
+
+        if ($continue && $dive_2_time && $dive_2_depth) {
+            try {
+                $return_data['dive_2_pg'] = $this->getPressureGroup($dive_2_depth, $dive_2_time, $return_data['rnt'] ?? 0);
+            } catch (DiveException $exception) {
+                $return_data['dive_2_pg'] = $exception->getMessage();
+            }
+        }
+
+        return $return_data;
+    }
 
     /**
      * @param int $depth maximum depth
@@ -194,6 +273,43 @@ Class DiveCalculator
         }
 
         return $return_time;
+    }
+
+    /**
+     * @param   string $pressure_group PG after SI
+     * @param   int $depth planned depth
+     * @return  mixed   either RNT or error message
+     * @throws  DiveException
+     */
+    public function getResidualNitrogenTime(string $pressure_group, int $depth)
+    {
+        if (!ctype_alpha($pressure_group) || strlen($pressure_group) !== 1) {
+            throw new DiveException(self::MESSAGE_INVALID_PRESSURE_GROUP);
+        }
+
+        $pressure_group = strtoupper($pressure_group);
+        $pressure_groups = $this->getTableGroups();
+        $nitrogen_times = $this->getTableThree();
+        $pressure_key = null;
+        foreach ($pressure_groups as $key => $group) {
+            if ($group == $pressure_group) {
+                $pressure_key = $key;
+            }
+        }
+        $rnt = null;
+        foreach ($nitrogen_times as $table_depth => $times) {
+            if ($depth <= $table_depth) {
+                if (isset($times[$pressure_key])) {
+                    $rnt = $times[$pressure_key];
+                } else {
+                    throw new DiveException(self::MESSAGE_OFF_REPETITIVE_DIVE_CHART);
+                }
+
+                break;
+            }
+        }
+
+        return $rnt;
     }
 
     public function getTableDepths(): array
