@@ -27,15 +27,14 @@ class PageController extends Controller
         $home_page = HomePage::query()
             ->where('is_active', 1)
             ->orderBy('revision', 'DESC')
-            ->first();
+            ->first()
+            ->toArray();
 
         return response()->json(JsonResponseData::formatData(
             $request,
             '',
             Message::MESSAGE_OK,
-            [
-                $home_page,
-            ]
+            $home_page,
         ));
     }
 }
