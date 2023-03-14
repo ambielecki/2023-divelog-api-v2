@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\RegisterRequest;
 use App\Library\JsonResponseData;
 use App\Library\Message;
 use App\Models\User;
@@ -9,16 +10,26 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth;
+
 class ApiAuthController extends Controller
 {
-    public function postRegister(Request $request): JsonResponse
+    public function postRegister(RegisterRequest $request): JsonResponse
     {
-        $user = User::create([
-            'first_name' => $request->first_name,
-            'last_name' => $request->last_name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+        try {
+            $user = User::create([
+                'first_name' => $request->first_name,
+                'last_name' => $request->last_name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+            ]);
+        } catch (\Exception $exception) {
+            return response()->json(JsonResponseData::formatData(
+                $request,
+                'Failed Creating New User',
+                Message::MESSAGE_ERROR,
+            ), 409);
+        }
+
 
         $token = auth('api')->login($user);
 
@@ -26,7 +37,8 @@ class ApiAuthController extends Controller
             $request,
             $token,
             'Thank you for registering',
-            Message::MESSAGE_SUCCESS
+            Message::MESSAGE_SUCCESS,
+            $user,
         );
     }
 
@@ -73,17 +85,23 @@ class ApiAuthController extends Controller
         ), 401);
     }
 
-    protected function respondWithToken(Request $request, $token, $message = 'Success', $message_type = Message::MESSAGE_OK): JsonResponse
+    protected function respondWithToken(Request $request, $token, $message = 'Success', $message_type = Message::MESSAGE_OK, $user = null): JsonResponse
     {
+        $data = [
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'expires_in' => auth('api')->factory()->getTTL(),
+        ];
+
+        if ($user) {
+            $data['user'] = $user;
+        }
+
         return response()->json(JsonResponseData::formatData(
             $request,
             $message,
             $message_type,
-            [
-                'access_token' => $token,
-                'token_type' => 'bearer',
-                'expires_in' => auth('api')->factory()->getTTL(),
-            ]
+            $data,
         ));
     }
 }
