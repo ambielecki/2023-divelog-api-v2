@@ -25,7 +25,7 @@ return [
     | This value determines the "environment" your application is currently
     | running in. This may determine how you prefer to configure various
     | services the application utilizes. Set this in your ".env" file.
-    |
+    |p
     */
 
     'env' => env('APP_ENV', 'production'),
@@ -181,10 +181,13 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
+        Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
 
         /*
          * Package Service Providers...
          */
+
+        Intervention\Image\ImageServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -209,7 +212,10 @@ return [
     */
 
     'aliases' => Facade::defaultAliases()->merge([
-        // 'ExampleClass' => App\Example\ExampleClass::class,
+        'Image' => Intervention\Image\Facades\Image::class
     ])->toArray(),
 
+    'default_password' => env('DEFAULT_PASSWORD', 'Ch@ng3m3'),
+    'test_user_email' => env('TEST_USER_EMAIL', 'testy@test.com'),
+    'test_user_password' => env('TEST_USER_PASSWORD', 'foobarfizzbuzz'),
 ];
