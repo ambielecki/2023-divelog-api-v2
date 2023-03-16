@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -15,13 +16,13 @@ return new class extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('dive_number');
-            $table->text('location');
-            $table->text('dive_site');
-            $table->date('date');
-            $table->text('description');
-            $table->text('notes');
-            $table->json('dive_details');
-            $table->json('equipment_details');
+            $table->text('location')->nullable();
+            $table->text('dive_site')->nullable();
+            $table->dateTime('date')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->text('description')->nullable();
+            $table->text('notes')->nullable();
+            $table->json('dive_details')->nullable();
+            $table->json('equipment_details')->nullable();
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users');

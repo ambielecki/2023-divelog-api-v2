@@ -28,8 +28,16 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::get('/user', [Controllers\ApiUserController::class, 'getUser']);
     Route::post('/password', [Controllers\ApiUserController::class, 'postResetPassword']);
     Route::post('/logout', [Controllers\ApiAuthController::class, 'postLogout']);
+
+    Route::group(['prefix' => 'dive-log'], function () {
+        Route::get('/', [Controllers\DiveLogController::class, 'getList']);
+        Route::post('/', [Controllers\DiveLogController::class, 'postCreate']);
+        Route::get('/max-dive-number', [Controllers\DiveLogController::class, 'getMaxDiveNumber']);
+    });
 });
 
 Route::get('/dive-calculation', [Controllers\DiveCalculatorController::class, 'getCalculation']);
 Route::get('/page/home', [Controllers\PageController::class, 'getHomePage']);
 Route::get('/page/{id}', [Controllers\PageController::class, 'getPage']);
+
+Route::fallback([\App\Http\Controllers\FallBackController::class, 'fallback']);
