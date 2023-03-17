@@ -25,5 +25,16 @@ class DiveLogsSeeder extends Seeder
         $dive_log->equipment_details = json_encode((object) []);
 
         $dive_log->save();
+
+        $dive_log = new DiveLog();
+        $dive_log->user_id = 1;
+        $dive_log->dive_number = $max_dive + 2;
+        $dive_log->location = 'Test Location 2';
+        $dive_log->dive_site = 'Test Site 2';
+        $dive_log->description = 'Some text here';
+        $dive_log->dive_details = json_encode((object) []);
+        $dive_log->equipment_details = json_encode((object) []);
+
+        $dive_log->save();
     }
 }

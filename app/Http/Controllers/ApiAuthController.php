@@ -55,7 +55,9 @@ class ApiAuthController extends Controller
             ), 401);
         }
 
-        return $this->respondWithToken($request, $token, 'Successfully Logged In', Message::MESSAGE_SUCCESS);
+        $user = User::where('email', $request->input('email'))->first();
+
+        return $this->respondWithToken($request, $token, 'Successfully Logged In', Message::MESSAGE_SUCCESS, $user);
     }
 
     public function postLogout(Request $request): JsonResponse

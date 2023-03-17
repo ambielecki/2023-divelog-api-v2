@@ -22,12 +22,12 @@ Route::get('/', function () {
 //Route::get('/home', 'ApiHomeController@getHome');
 Route::post('/register', [Controllers\ApiAuthController::class, 'postRegister']);
 Route::post('/login', [Controllers\ApiAuthController::class, 'postLogin']);
-Route::post('/refresh', [Controllers\ApiAuthController::class, 'postRefresh']);
 
 Route::group(['middleware' => ['auth:api']], function () {
     Route::get('/user', [Controllers\ApiUserController::class, 'getUser']);
     Route::post('/password', [Controllers\ApiUserController::class, 'postResetPassword']);
     Route::post('/logout', [Controllers\ApiAuthController::class, 'postLogout']);
+    Route::post('/refresh', [Controllers\ApiAuthController::class, 'postRefresh']);
 
     Route::group(['prefix' => 'dive-log'], function () {
         Route::get('/', [Controllers\DiveLogController::class, 'getList']);
