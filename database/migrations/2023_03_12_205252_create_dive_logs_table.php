@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -17,7 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('dive_number');
             $table->text('location');
             $table->text('dive_site');
-            $table->date('date');
+            $table->dateTime('date_time')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->text('description');
             $table->text('notes');
             $table->json('dive_details');

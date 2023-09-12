@@ -28,6 +28,11 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::get('/user', [Controllers\ApiUserController::class, 'getUser']);
     Route::post('/password', [Controllers\ApiUserController::class, 'postResetPassword']);
     Route::post('/logout', [Controllers\ApiAuthController::class, 'postLogout']);
+
+    Route::group(['prefix' => '/dive-log'], function () {
+        Route::get('/', [Controllers\DiveLogController::class, 'getIndex']);
+        Route::get('/{id}', [Controllers\DiveLogController::class, 'getDetails']);
+    });
 });
 
 Route::get('/dive-calculation', [Controllers\DiveCalculatorController::class, 'getCalculation']);

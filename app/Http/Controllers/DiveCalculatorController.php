@@ -8,10 +8,8 @@ use App\Library\JsonResponseData;
 use App\Library\Message;
 use Illuminate\Http\JsonResponse;
 
-class DiveCalculatorController extends Controller
-{
-    public function getCalculation(DiveCalculatorRequest $request): JsonResponse
-    {
+class DiveCalculatorController extends Controller {
+    public function getCalculation(DiveCalculatorRequest $request): JsonResponse {
         $dive_calculator = new DiveCalculator();
         $calculation = $dive_calculator->handleApiRequest(
             $request->input('dive_1_depth') ?: null,
