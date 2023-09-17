@@ -18,7 +18,12 @@ return new class extends Migration
             $table->unsignedBigInteger('dive_number');
             $table->text('location');
             $table->text('dive_site');
+            $table->text('buddy');
             $table->dateTime('date_time')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->integer('max_depth_ft')->nullable();
+            $table->integer('bottom_time_min')->nullable();
+            $table->integer('surface_interval_min')->nullable();
+            $table->boolean('used_computer')->default(0);
             $table->text('description');
             $table->text('notes');
             $table->json('dive_details');

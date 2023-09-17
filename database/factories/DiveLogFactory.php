@@ -16,12 +16,20 @@ class DiveLogFactory extends Factory
      */
     public function definition(): array
     {
+        $timestamp_start = strtotime('1 year ago');
+        $timestamp_end = strtotime('now');
+
         return [
             'user_id' => 1,
-            'dive_number' => random_int(1, 1000),
+            'dive_number' => random_int(1, 10000),
             'location' => fake()->country,
             'dive_site' => fake()->word,
-            'date_time' => date('Y-m-d H:i:s'),
+            'buddy' => fake()->name,
+            'max_depth_ft' => random_int(30, 75),
+            'bottom_time_min' => 30,
+            'surface_interval_min' => 0,
+            'used_computer' => true,
+            'date_time' => date('Y-m-d H:i:s', rand($timestamp_start, $timestamp_end)),
             'description' => fake()->paragraph(3),
             'notes' => fake()->paragraph(4),
             'dive_details' => json_encode([]),

@@ -12,4 +12,8 @@ class DiveLogPolicy
     public function read(User $user, DiveLog $dive_log): bool {
         return $user->id === $dive_log->user_id;
     }
+
+    public function update(User $user, DiveLog $dive_log): bool {
+        return $user->id === $dive_log->user_id;
+    }
 }
