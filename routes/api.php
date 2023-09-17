@@ -31,6 +31,8 @@ Route::group(['middleware' => ['auth:api']], function () {
 
     Route::group(['prefix' => '/dive-log'], function () {
         Route::get('/', [Controllers\DiveLogController::class, 'getIndex']);
+        Route::post('/', [Controllers\DiveLogController::class, 'postCreate']);
+        Route::get('/max-dive', [Controllers\DiveLogController::class, 'getMaxDive']);
         Route::get('/{id}', [Controllers\DiveLogController::class, 'getDetails']);
         Route::put('/{id}', [Controllers\DiveLogController::class, 'updateDetails']);
     });

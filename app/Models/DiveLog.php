@@ -7,8 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 
-class DiveLog extends Model
-{
+class DiveLog extends Model {
     use HasFactory;
 
     const DIVE_NUMBER = 'dive_number';
@@ -16,9 +15,14 @@ class DiveLog extends Model
         self::DIVE_NUMBER,
     ];
 
+    protected $casts = [
+        'dive_details'      => 'array',
+        'equipment_details' => 'array',
+    ];
+
     public function getLogs(DiveLogIndexRequest $request): array {
-        $page = (int) $request->input('page') ?? 1;
-        $limit = (int) $request->input('limit') ?? 20;
+        $page = (int)$request->input('page') ?? 1;
+        $limit = (int)$request->input('limit') ?? 20;
 
         $skip = ($page - 1) * $limit;
 
@@ -40,9 +44,9 @@ class DiveLog extends Model
 
         return [
             'dive_logs' => $logs,
-            'page' => $page,
-            'pages' => ceil($count / $limit),
-            'limit' => $limit,
+            'page'      => $page,
+            'pages'     => ceil($count / $limit),
+            'limit'     => $limit,
         ];
     }
 
@@ -62,5 +66,7 @@ class DiveLog extends Model
         $this->used_computer = $request->input('used_computer');
         $this->description = $request->input('description');
         $this->notes = $request->input('notes');
+        $this->dive_details = [];
+        $this->equipment_details = [];
     }
 }

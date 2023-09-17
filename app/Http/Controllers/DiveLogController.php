@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\DiveLog\DiveLogIndexRequest;
-use App\Http\Requests\DiveLog\DiveLogPutRequest;
+use App\Http\Requests\DiveLog\DiveLogRequest;
 use App\Library\JsonResponseData;
 use App\Library\Message;
 use App\Models\DiveLog;
@@ -19,6 +19,19 @@ class DiveLogController extends Controller {
             '',
             Message::MESSAGE_OK,
             $dive_log->getLogs($request),
+        ));
+    }
+
+    public function getMaxDive(Request $request): JsonResponse {
+        $user = $request->user();
+
+        $max_dive = DiveLog::where('user_id', $user->id)->max('dive_number');
+
+        return response()->json(JsonResponseData::formatData(
+            $request,
+            '',
+            Message::MESSAGE_OK,
+            ['max_dive' => $max_dive],
         ));
     }
 
@@ -52,7 +65,28 @@ class DiveLogController extends Controller {
         ));
     }
 
-    public function updateDetails(DiveLogPutRequest $request, $id): JsonResponse {
+    public function postCreate(DiveLogRequest $request): JsonResponse {
+        $log = new DiveLog();
+        $log->fillLog($request, true);
+
+        if ($log->save()) {
+            return response()->json(JsonResponseData::formatData(
+                $request,
+                '',
+                Message::MESSAGE_OK,
+                ['dive_log' => $log],
+            ));
+        }
+
+        return response()->json(JsonResponseData::formatData(
+            $request,
+            'Something went wrong updating log, please try again later',
+            Message::MESSAGE_ERROR,
+            [],
+        ), 500);
+    }
+
+    public function updateDetails(DiveLogRequest $request, $id): JsonResponse {
         $log = DiveLog::find($id);
         if (!$log) {
             return response()->json(JsonResponseData::formatData(
