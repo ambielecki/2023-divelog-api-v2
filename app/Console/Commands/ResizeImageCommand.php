@@ -39,7 +39,7 @@ class ResizeImageCommand extends Command {
         $this->line("Found image id: $image_record->id");
 
         $manager = new ImageManager(['driver' => 'gd',]);
-        $image = $manager->make(File::get(public_path($image_record->folder . $image_record->file_name)));
+        $image = $manager->make(File::get(storage_path($image_record->folder . $image_record->file_name)));
 
         try {
             $image->backup();
@@ -64,15 +64,15 @@ class ResizeImageCommand extends Command {
     }
 
     private function createImage(InterventionImage $image, string $width, string $folder, string $file_name): void {
-        if (!File::exists(public_path($folder))) {
-            File::makeDirectory(public_path($folder));
+        if (!File::exists(storage_path($folder))) {
+            File::makeDirectory(storage_path($folder));
         }
 
         $image->resize($width, null, function ($constraint) {
             $constraint->aspectRatio();
         });
 
-        $image->save(public_path($folder . $file_name), 70);
+        $image->save(storage_path($folder . $file_name), 70);
         $image->reset();
     }
 }

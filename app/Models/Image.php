@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Http\Requests\ImageCreateRequest;
+use App\Http\Requests\Image\ImageCreateRequest;
 use Exception;
 use Illuminate\Support\Facades\File;
 use Illuminate\Database\Eloquent\Model;
@@ -27,7 +27,7 @@ class Image extends Model {
                 });
             }
 
-            $folder = 'images/' . date('Y-m') . '/';
+            $folder = '/app/public/images/' . date('Y-m') . '/';
 
             $unique_check = false;
             while (!$unique_check) {
@@ -40,19 +40,19 @@ class Image extends Model {
             $path = $folder . $file_name;
 
             // check if folder exists, if not create it
-            if (!File::exists(public_path('images/'))) {
-                File::makeDirectory(public_path('images'));
+            if (!File::exists(storage_path('/app/public/images/'))) {
+                File::makeDirectory(storage_path('/app/public/images'));
             }
 
-            if (!File::exists(public_path($folder))) {
-                File::makeDirectory(public_path($folder));
+            if (!File::exists(storage_path($folder))) {
+                File::makeDirectory(storage_path($folder));
             }
 
-            if ($image->save(public_path($path . '.jpg'))) {
+            if ($image->save(storage_path($path . '.jpg'))) {
                 $db_image = new self();
                 $db_image->file_name = $file_name . '.jpg';
                 $db_image->folder = $folder;
-                $db_image->title = $request->input('title');
+                $db_image->alt_tag = $request->input('alt_tag');
                 $db_image->description = $request->input('description');
                 $db_image->is_hero = $request->input('is_hero') ? 1 : 0;
                 $db_image->save();
@@ -65,6 +65,8 @@ class Image extends Model {
                 ]);
 
                 $path = base_path();
+
+                // TODO: Convert this to a job / queue
                 shell_exec("cd $path && nohup php artisan divelog:resize_image $task->id >> /dev/null 2>&1 &");
 
                 return $db_image->id;

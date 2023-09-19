@@ -36,6 +36,10 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::get('/{id}', [Controllers\DiveLogController::class, 'getDetails']);
         Route::put('/{id}', [Controllers\DiveLogController::class, 'updateDetails']);
     });
+
+    Route::group(['middleware' => ['admin'], 'prefix' => '/admin'], function () {
+        Route::post('/image', [Controllers\ImageController::class, 'postUpload']);
+    });
 });
 
 Route::get('/dive-calculation', [Controllers\DiveCalculatorController::class, 'getCalculation']);

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->bigIncrements('id');
             $table->text('folder');
             $table->string('file_name', 100)->unique();
-            $table->text('title');
+            $table->text('alt_tag');
             $table->text('description');
             $table->tinyInteger('is_hero')->default(0);
             $table->text('aspect_ratio')->nullable();

@@ -18,7 +18,7 @@ class ApiUserController extends Controller
             $request,
             '',
             Message::MESSAGE_OK,
-            $request->user()->toArray()
+            ['user' => $request->user()],
         ));
     }
 
