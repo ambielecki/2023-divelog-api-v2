@@ -24,8 +24,8 @@ return new class extends Migration
             $table->integer('bottom_time_min')->nullable();
             $table->integer('surface_interval_min')->nullable();
             $table->boolean('used_computer')->default(0);
-            $table->text('description');
-            $table->text('notes');
+            $table->text('description')->nullable();
+            $table->text('notes')->nullable();
             $table->json('dive_details');
             $table->json('equipment_details');
             $table->timestamps();
