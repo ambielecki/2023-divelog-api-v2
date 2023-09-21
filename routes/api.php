@@ -19,7 +19,6 @@ Route::get('/', function () {
     return response()->json([]);
 });
 
-//Route::get('/home', 'ApiHomeController@getHome');
 Route::post('/register', [Controllers\ApiAuthController::class, 'postRegister']);
 Route::post('/login', [Controllers\ApiAuthController::class, 'postLogin']);
 Route::post('/refresh', [Controllers\ApiAuthController::class, 'postRefresh']);
@@ -38,7 +37,10 @@ Route::group(['middleware' => ['auth:api']], function () {
     });
 
     Route::group(['middleware' => ['admin'], 'prefix' => '/admin'], function () {
-        Route::post('/image', [Controllers\ImageController::class, 'postUpload']);
+        Route::group(['prefix' => '/image'], function () {
+            Route::get('/', [Controllers\ImageController::class, 'getIndex']);
+            Route::post('/', [Controllers\ImageController::class, 'postUpload']);
+        });
     });
 });
 

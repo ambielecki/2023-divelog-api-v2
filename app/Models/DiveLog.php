@@ -3,51 +3,28 @@
 namespace App\Models;
 
 use App\Http\Requests\DiveLog\DiveLogIndexRequest;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 
-class DiveLog extends Model {
+class DiveLog extends PaginatedModel {
     use HasFactory;
 
-    const DIVE_NUMBER = 'dive_number';
-    const SORTABLE_FIELDS = [
-        self::DIVE_NUMBER,
-    ];
+    const DEFAULT_SORT_FIELD  = 'dive_number';
 
     protected $casts = [
         'dive_details'      => 'array',
         'equipment_details' => 'array',
     ];
 
-    public function getLogs(DiveLogIndexRequest $request): array {
-        $page = (int)$request->input('page') ?? 1;
-        $limit = (int)$request->input('limit') ?? 20;
+    public function __construct(array $attributes = []) {
+        parent::__construct($attributes);
 
-        $skip = ($page - 1) * $limit;
+        $this->allowed_sorts[self::DEFAULT_SORT_FIELD] = 1;
+    }
 
-        $sort = $request->input('sort');
-        $sort_direction = $request->input('sort_direction') ?? 'dive_number';
-
-        $user = $request->user();
-
-        $query = DiveLog::query()
-            ->where('user_id', $user->id);
-
-        $count = $query->count('id');
-
-        $logs = $query
-            ->orderBy($sort, $sort_direction)
-            ->limit($limit)
-            ->skip($skip)
-            ->get();
-
-        return [
-            'dive_logs' => $logs,
-            'page'      => $page,
-            'pages'     => ceil($count / $limit),
-            'limit'     => $limit,
-        ];
+    protected function addUser(Builder $query, Request $request): Builder {
+        return $query->where('user_id', $request->user()->id);
     }
 
     public function fillLog(Request $request, bool $new = false) {

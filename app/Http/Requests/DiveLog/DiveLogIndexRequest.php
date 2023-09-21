@@ -29,8 +29,7 @@ class DiveLogIndexRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'sort_direction' => Rule::in(Constants::SORT_DIRECTIONS),
-            'sort' => Rule::in(DiveLog::SORTABLE_FIELDS),
+
         ];
     }
 

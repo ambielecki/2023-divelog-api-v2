@@ -7,9 +7,15 @@ use App\Library\JsonResponseData;
 use App\Library\Message;
 use App\Models\Image;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class ImageController extends Controller
 {
+    public function getIndex(Request $request):  JsonResponse {
+
+        return response()->json([]);
+    }
+
     public function postUpload(ImageCreateRequest $request): JsonResponse {
         $image_id = Image::createImage($request);
 

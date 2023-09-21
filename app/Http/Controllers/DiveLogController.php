@@ -18,7 +18,7 @@ class DiveLogController extends Controller {
             $request,
             '',
             Message::MESSAGE_OK,
-            $dive_log->getLogs($request),
+            $dive_log->getPaginatedResults($request),
         ));
     }
 
