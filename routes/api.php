@@ -41,6 +41,10 @@ Route::group(['middleware' => ['auth:api']], function () {
             Route::get('/', [Controllers\ImageController::class, 'getIndex']);
             Route::post('/', [Controllers\ImageController::class, 'postUpload']);
         });
+
+        Route::group(['prefix' => 'tag'], function () {
+            Route::get('/', [Controllers\TagController::class, 'getIndex']);
+        });
     });
 });
 

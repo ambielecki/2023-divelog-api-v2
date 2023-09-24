@@ -2,10 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Http\Request;
 
 class Tag extends Model {
+    use HasFactory;
+
     protected $fillable = ['name',];
 
     public function setNameAttribute($value): void {
@@ -16,21 +20,31 @@ class Tag extends Model {
         return $this->belongsToMany(Image::class)->withTimestamps();
     }
 
-    public static function createNewTags(string $tags): array {
-        $ids = [];
-        $tag_names = explode(',', str_replace(' ', '', $tags));
+    public function getList(Request $request): array {
+        $query = self::query()
+            ->orderBy('name');
 
-        foreach ($tag_names as $tag_name) {
-            if ($tag_name) {
-                $tag = Tag::where('name', $tag_name)->first();
-                if (!$tag) {
-                    $tag = self::create(['name' => strtolower($tag_name)]);
-                }
-
-                $ids[] = $tag->id;
-            }
+        if ($request->input('search')) {
+            $search = $request->input('search');
+            $query = $query->where('name', 'LIKE', "%$search%");
         }
 
-        return $ids;
+        return $query->get()->toArray();
+    }
+
+    public static function getListOfIds(array $tag_names): array {
+        $tag_ids = [];
+        foreach ($tag_names as $name) {
+            $tag = self::where('name', $name)->first();
+            if (!$tag) {
+                $tag = new self();
+                $tag->name = $name;
+                $tag->save();
+            }
+
+            $tag_ids[] = $tag->id;
+        }
+
+        return $tag_ids;
     }
 }

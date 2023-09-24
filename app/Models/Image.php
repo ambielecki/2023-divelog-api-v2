@@ -4,20 +4,29 @@ namespace App\Models;
 
 use App\Http\Requests\Image\ImageCreateRequest;
 use Exception;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\File;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Intervention\Image\Facades\Image as InverventionImage;
 use Illuminate\Support\Facades\Log;
 
-class Image extends Model {
+class Image extends PaginatedModel {
+    protected $appends = ['public_path'];
+
     public function tags(): BelongsToMany {
         return $this->belongsToMany(Tag::class)
             ->withTimestamps()
             ->orderBy('name', 'ASC');
     }
 
-    public static function createImage(ImageCreateRequest $request): int {
+    public function publicPath(): Attribute {
+        return Attribute::make(
+            get: fn (mixed $value, array $attributes) => str_replace('/app/public', '/storage', $attributes['folder'])
+        );
+    }
+
+    public static function createImage(ImageCreateRequest $request): ?self {
         try {
             $image = InverventionImage::make($request->file('image_file'))->encode('jpg');
             $width = $image->width();
@@ -27,7 +36,7 @@ class Image extends Model {
                 });
             }
 
-            $folder = '/app/public/images/' . date('Y-m') . '/';
+            $folder = '/app/public/images/' . date('Y-m');
 
             $unique_check = false;
             while (!$unique_check) {
@@ -37,7 +46,7 @@ class Image extends Model {
                 }
             }
 
-            $path = $folder . $file_name;
+            $path = $folder . '/' . $file_name;
 
             // check if folder exists, if not create it
             if (!File::exists(storage_path('/app/public/images/'))) {
@@ -69,14 +78,18 @@ class Image extends Model {
                 // TODO: Convert this to a job / queue
                 shell_exec("cd $path && nohup php artisan divelog:resize_image $task->id >> /dev/null 2>&1 &");
 
-                return $db_image->id;
+                return $db_image;
             }
 
-            return 0;
+            return null;
         } catch (Exception $e) {
             Log::error($e);
 
-            return 0;
+            return null;
         }
+    }
+
+    protected function addRelations(Builder $query): Builder {
+        return $query->with('tags');
     }
 }

@@ -39,17 +39,17 @@ class ResizeImageCommand extends Command {
         $this->line("Found image id: $image_record->id");
 
         $manager = new ImageManager(['driver' => 'gd',]);
-        $image = $manager->make(File::get(storage_path($image_record->folder . $image_record->file_name)));
+        $image = $manager->make(File::get(storage_path($image_record->folder . '/' . $image_record->file_name)));
 
         try {
             $image->backup();
             if ($image_record->has_high_res) {
-                $this->createImage($image, '3840', $image_record->folder . 'xl/', $image_record->file_name);
+                $this->createImage($image, '3840', $image_record->folder . '/xl/', $image_record->file_name);
             }
 
-            $this->createImage($image, '1920', $image_record->folder . 'large/', $image_record->file_name);
-            $this->createImage($image, '1080', $image_record->folder . 'medium/', $image_record->file_name);
-            $this->createImage($image, '600', $image_record->folder . 'small/', $image_record->file_name);
+            $this->createImage($image, '1920', $image_record->folder . '/large/', $image_record->file_name);
+            $this->createImage($image, '1080', $image_record->folder . '/medium/', $image_record->file_name);
+            $this->createImage($image, '600', $image_record->folder . '/small/', $image_record->file_name);
 
             $image_record->has_sizes = 1;
             $image_record->save();
@@ -72,7 +72,7 @@ class ResizeImageCommand extends Command {
             $constraint->aspectRatio();
         });
 
-        $image->save(storage_path($folder . $file_name), 70);
+        $image->save(storage_path($folder . '/' . $file_name), 70);
         $image->reset();
     }
 }

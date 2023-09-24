@@ -1,17 +1,14 @@
 <?php
 
-namespace App\Http\Requests\DiveLog;
+namespace App\Http\Requests\Image;
 
-use App\Library\Constants;
 use App\Library\JsonResponseData;
 use App\Library\Message;
-use App\Models\DiveLog;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Validation\Rule;
 
-class DiveLogIndexRequest extends FormRequest {
+class ImageIndexRequest extends FormRequest {
     /**
      * Determine if the user is authorized to make this request.
      */

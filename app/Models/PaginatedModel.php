@@ -39,6 +39,7 @@ abstract class PaginatedModel extends Model {
         }
 
         $query = self::query();
+        $query = $this->addRelations($query);
         $query = $this->addUser($query, $request);
 
         $count = $query->count();
@@ -52,14 +53,18 @@ abstract class PaginatedModel extends Model {
         $class = Str::snake(Str::plural((new \ReflectionClass($this))->getShortName()));
 
         return [
-            $class => $results,
-            'page'           => $page,
-            'pages'          => ceil($count / $limit),
-            'limit'          => $limit,
+            $class  => $results,
+            'page'  => $page,
+            'pages' => ceil($count / $limit),
+            'limit' => $limit,
         ];
     }
 
     protected function addUser(Builder $query, Request $request): Builder {
+        return $query;
+    }
+
+    protected function addRelations(Builder $query): Builder {
         return $query;
     }
 }
