@@ -40,6 +40,7 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::group(['prefix' => '/image'], function () {
             Route::get('/', [Controllers\ImageController::class, 'getIndex']);
             Route::post('/', [Controllers\ImageController::class, 'postUpload']);
+            Route::patch('/{id}', [Controllers\ImageController::class, 'patchUpdate']);
         });
 
         Route::group(['prefix' => 'tag'], function () {

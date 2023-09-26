@@ -3,7 +3,9 @@
 namespace App\Models;
 
 use App\Http\Requests\Image\ImageCreateRequest;
+use App\Http\Requests\Image\ImageUpdateRequest;
 use Exception;
+use http\Env\Request;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\File;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -87,6 +89,26 @@ class Image extends PaginatedModel {
 
             return null;
         }
+    }
+
+    public static function updateImage(ImageUpdateRequest $request, $id): ?Image {
+        $image = self::find($id);
+        if ($image) {
+            if ($request->input('alt_tag')) {
+                $image->alt_tag = $request->input('alt_tag');
+            }
+            if ($request->input('description')) {
+                $image->alt_tag = $request->input('description');
+            }
+            if ($request->input('is_hero')) {
+                $image->alt_tag = $request->input('is_hero');
+            }
+            $image->save();
+
+            return $image;
+        }
+
+        return null;
     }
 
     protected function addRelations(Builder $query): Builder {
