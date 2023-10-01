@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers;
 
@@ -15,11 +14,9 @@ use App\Http\Controllers;
 |
 */
 
-Route::get('/', function () {
-    return response()->json([]);
+Route::get('/', function (\Illuminate\Http\Request $request) {
+    return response()->json(\App\Library\JsonResponseData::formatData($request, 'Health OK'));
 });
-
-Route::get('/home-page', [Controllers\HomePageController::class, '']);
 
 Route::post('/register', [Controllers\ApiAuthController::class, 'postRegister']);
 Route::post('/login', [Controllers\ApiAuthController::class, 'postLogin']);
