@@ -26,8 +26,9 @@ class DiveLogIndexRequest extends FormRequest {
      */
     public function rules(): array {
         return [
-            'limit' => 'numeric|nullable',
-            'page'  => 'numeric|nullable',
+            'limit'    => 'numeric|nullable',
+            'page'     => 'numeric|nullable',
+            'get_hero' => 'numeric|nullable',
         ];
     }
 

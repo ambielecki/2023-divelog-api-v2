@@ -5,7 +5,7 @@ namespace App\Models;
 use App\Http\Requests\Image\ImageCreateRequest;
 use App\Http\Requests\Image\ImageUpdateRequest;
 use Exception;
-use http\Env\Request;
+use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\File;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -111,7 +111,15 @@ class Image extends PaginatedModel {
         return null;
     }
 
-    protected function addRelations(Builder $query): Builder {
+    protected function addRelations(Builder $query, Request $request): Builder {
         return $query->with('tags');
+    }
+
+    protected function addWheres(Builder $query, Request $request): Builder {
+        if ($request->input('get_hero')) {
+            return $query->where('is_hero', (int) $request->input('get_hero'));
+        }
+
+        return $query;
     }
 }

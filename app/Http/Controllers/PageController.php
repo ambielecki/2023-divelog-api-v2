@@ -28,13 +28,13 @@ class PageController extends Controller
             ->where('is_active', 1)
             ->orderBy('revision', 'DESC')
             ->first()
-            ->toArray();
+            ;
 
         return response()->json(JsonResponseData::formatData(
             $request,
             '',
             Message::MESSAGE_OK,
-            $home_page,
+            ['home_page' => $home_page],
         ));
     }
 }

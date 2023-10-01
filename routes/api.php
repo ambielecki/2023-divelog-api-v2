@@ -19,6 +19,8 @@ Route::get('/', function () {
     return response()->json([]);
 });
 
+Route::get('/home-page', [Controllers\HomePageController::class, '']);
+
 Route::post('/register', [Controllers\ApiAuthController::class, 'postRegister']);
 Route::post('/login', [Controllers\ApiAuthController::class, 'postLogin']);
 Route::post('/refresh', [Controllers\ApiAuthController::class, 'postRefresh']);

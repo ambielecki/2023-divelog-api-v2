@@ -39,8 +39,9 @@ abstract class PaginatedModel extends Model {
         }
 
         $query = self::query();
-        $query = $this->addRelations($query);
+        $query = $this->addRelations($query, $request);
         $query = $this->addUser($query, $request);
+        $query = $this->addWheres($query, $request);
 
         $count = $query->count();
 
@@ -64,7 +65,11 @@ abstract class PaginatedModel extends Model {
         return $query;
     }
 
-    protected function addRelations(Builder $query): Builder {
+    protected function addRelations(Builder $query, Request $request): Builder {
+        return $query;
+    }
+
+    protected function addWheres(Builder $query, Request $request): Builder {
         return $query;
     }
 }
