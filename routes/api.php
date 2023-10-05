@@ -36,6 +36,8 @@ Route::group(['middleware' => ['auth:api']], function () {
     });
 
     Route::group(['middleware' => ['admin'], 'prefix' => '/admin'], function () {
+        Route::post('home', [Controllers\PageController::class, 'postHomePage']);
+
         Route::group(['prefix' => '/image'], function () {
             Route::get('/', [Controllers\ImageController::class, 'getIndex']);
             Route::post('/', [Controllers\ImageController::class, 'postUpload']);

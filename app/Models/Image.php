@@ -116,7 +116,7 @@ class Image extends PaginatedModel {
     }
 
     protected function addWheres(Builder $query, Request $request): Builder {
-        if ($request->input('get_hero')) {
+        if ($request->has('get_hero')) {
             return $query->where('is_hero', (int) $request->input('get_hero'));
         }
 
