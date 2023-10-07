@@ -36,7 +36,7 @@ class DiveLog extends PaginatedModel {
         $this->location = $request->input('location');
         $this->dive_site = $request->input('dive_site');
         $this->buddy = $request->input('buddy');
-        $this->date_time = $request->input('date_time');
+        $this->date_time = date('Y-m-d H:i:s', strtotime($request->input('date_time')));
         $this->max_depth_ft = $request->input('max_depth_ft');
         $this->bottom_time_min = $request->input('bottom_time_min');
         $this->surface_interval_min = $request->input('surface_interval_min');
