@@ -43,14 +43,14 @@ class PageController extends Controller {
             ->first();
         $data = [
             'parent_id' => null,
-            'revision' => 1
+            'revision'  => 1,
         ];
 
         if ($first_home_page) {
             $last_revision = (int) HomePage::query()->max('revision');
             $data = [
                 'parent_id' => $first_home_page->id,
-                'revision' => $last_revision + 1
+                'revision'  => $last_revision + 1,
             ];
         }
 
@@ -60,12 +60,13 @@ class PageController extends Controller {
 
         $home_page = HomePage::create(array_merge([
             'is_active' => true,
-            'content' => [
-                'content' => $request->input('page.content.content'),
-                'title' => $request->input('page.content.title'),
-                'hero_image' => $request->input('hero_image'),
-                'carousel_images'=> $request->input('carousel_images'),
-            ]
+            'content'   => [
+                'content'           => $request->input('page.content.content'),
+                'image_description' => $request->input('page.content.image_description'),
+                'title'             => $request->input('page.content.title'),
+                'hero_image'        => $request->input('hero_image'),
+                'carousel_images'   => $request->input('carousel_images'),
+            ],
         ], $data));
 
         DB::commit();
