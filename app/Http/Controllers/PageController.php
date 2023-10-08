@@ -37,39 +37,7 @@ class PageController extends Controller {
     }
 
     public function postHomePage(HomePageEditRequest $request): JsonResponse {
-        $first_home_page = HomePage::query()
-            ->where('is_active', 1)
-            ->orderBy('revision', 'ASC')
-            ->first();
-        $data = [
-            'parent_id' => null,
-            'revision'  => 1,
-        ];
-
-        if ($first_home_page) {
-            $last_revision = (int) HomePage::query()->max('revision');
-            $data = [
-                'parent_id' => $first_home_page->id,
-                'revision'  => $last_revision + 1,
-            ];
-        }
-
-        DB::beginTransaction();
-
-        HomePage::query()->update(['is_active' => 0]);
-
-        $home_page = HomePage::create(array_merge([
-            'is_active' => true,
-            'content'   => [
-                'content'           => $request->input('page.content.content'),
-                'image_description' => $request->input('page.content.image_description'),
-                'title'             => $request->input('page.content.title'),
-                'hero_image'        => $request->input('hero_image'),
-                'carousel_images'   => $request->input('carousel_images'),
-            ],
-        ], $data));
-
-        DB::commit();
+        $home_page = HomePage::setHomePage($request->all());
 
         return response()->json(JsonResponseData::formatData(
             $request,

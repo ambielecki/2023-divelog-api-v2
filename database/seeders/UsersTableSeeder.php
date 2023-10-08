@@ -24,8 +24,8 @@ class UsersTableSeeder extends Seeder
             $user = new \App\Models\User();
             $user->first_name = 'Testy';
             $user->last_name = 'McTersterson';
-            $user->email = 'testy@test.com';
-            $user->password = \Illuminate\Support\Facades\Hash::make('foobarfizzbuzz');
+            $user->email = config('app.test_user_email');
+            $user->password = \Illuminate\Support\Facades\Hash::make(config('app.test_user_password'));
             $user->is_admin = 0;
             $user->save();
         }

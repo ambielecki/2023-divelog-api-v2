@@ -5,9 +5,12 @@ namespace App\Models\Pages;
 use App\Models\Image;
 use App\Models\Page;
 use App\Scopes\HomePageScope;
-use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\DB;
 
 class HomePage extends Page {
+    use HasFactory;
+
     const PAGE_TYPE = 'home';
     const TITLE = 'Dive Log Repeat - Home';
 
@@ -43,5 +46,43 @@ class HomePage extends Page {
         }
 
         return $content;
+    }
+
+    public static function setHomePage(array $request_data): self {
+        $first_home_page = HomePage::query()
+            ->where('is_active', 1)
+            ->orderBy('revision', 'ASC')
+            ->first();
+        $data = [
+            'parent_id' => null,
+            'revision'  => 1,
+        ];
+
+        if ($first_home_page) {
+            $last_revision = (int) HomePage::query()->max('revision');
+            $data = [
+                'parent_id' => $first_home_page->id,
+                'revision'  => $last_revision + 1,
+            ];
+        }
+
+        DB::beginTransaction();
+
+        HomePage::query()->update(['is_active' => 0]);
+
+        $home_page = HomePage::create(array_merge([
+            'is_active' => true,
+            'content'   => [
+                'content'           => $request_data['page']['content']['content'],
+                'image_description' => $request_data['page']['content']['image_description'] ?? '',
+                'title'             => $request_data['page']['content']['title'],
+                'hero_image'        => $request_data['hero_image'] ?? null,
+                'carousel_images'   => $request_data['carousel_images'] ?? [],
+            ],
+        ], $data));
+
+        DB::commit();
+
+        return $home_page;
     }
 }

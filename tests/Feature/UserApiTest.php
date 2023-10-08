@@ -39,7 +39,8 @@ class UserApiTest extends TestCase
         ])->getJson('/api/user');
 
         $response->assertStatus(200);
-        $response->assertJsonPath('data.email', config('app.test_user_email'));
+
+        $response->assertJsonPath('data.user.email', config('app.test_user_email'));
     }
 
     public function test_it_fails_access_without_jwt(): void

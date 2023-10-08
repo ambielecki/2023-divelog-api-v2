@@ -23,7 +23,7 @@ class HomePageSeeder extends Seeder
                 '<p>This site is very much in progress and is also a part time hobby, currently the only functionality is a highlightable set of PADI tables, but hopefully soon the dive calculator and divelog will be functional.</p>',
         ];
         $page->revision = 1;
-        $page->parent_id = 1;
+        $page->parent_id = null;
         $page->is_active = true;
         $page->save();
     }
