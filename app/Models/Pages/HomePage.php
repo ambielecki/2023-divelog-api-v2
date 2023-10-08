@@ -21,7 +21,7 @@ class HomePage extends Page {
 
         static::creating(function ($query) {
             $query->page_type = self::PAGE_TYPE;
-            $query->title =
+            $query->title = self::TITLE;
             $query->slug = '/';
         });
     }
@@ -49,14 +49,14 @@ class HomePage extends Page {
     }
 
     public static function setHomePage(array $request_data): self {
-        $first_home_page = HomePage::query()
-            ->where('is_active', 1)
-            ->orderBy('revision', 'ASC')
-            ->first();
         $data = [
             'parent_id' => null,
             'revision'  => 1,
         ];
+
+        $first_home_page = HomePage::query()
+            ->orderBy('revision', 'ASC')
+            ->first();
 
         if ($first_home_page) {
             $last_revision = (int) HomePage::query()->max('revision');
@@ -70,7 +70,7 @@ class HomePage extends Page {
 
         HomePage::query()->update(['is_active' => 0]);
 
-        $home_page = HomePage::create(array_merge([
+        $home_page = self::create(array_merge([
             'is_active' => true,
             'content'   => [
                 'content'           => $request_data['page']['content']['content'],

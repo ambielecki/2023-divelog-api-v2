@@ -2,12 +2,18 @@
 
 namespace Tests\Feature;
 
+use Database\Seeders\UsersTableSeeder;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class UserApiTest extends TestCase
 {
+    use RefreshDatabase;
+
     public function test_it_gets_jwt_from_login(): void
     {
+        $this->seed(UsersTableSeeder::class);
+
         $response = $this->postJson('/api/login', [
             'email' => config('app.test_user_email'),
             'password' => config('app.test_user_password'),
@@ -26,6 +32,8 @@ class UserApiTest extends TestCase
 
     public function test_it_can_access_guarded_with_jwt(): void
     {
+        $this->seed(UsersTableSeeder::class);
+
         $login = $this->postJson('/api/login', [
             'email' => config('app.test_user_email'),
             'password' => config('app.test_user_password'),

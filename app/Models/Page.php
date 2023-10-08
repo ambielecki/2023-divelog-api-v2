@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Page extends Model
 {
     protected $table = 'pages';
-    protected $fillable = ['page_type', 'slug', 'title', 'content', 'is_active', 'revision'];
+    protected $fillable = ['page_type', 'slug', 'title', 'content', 'is_active', 'revision', 'parent_id'];
 
     const PAGE_TYPE = 'page';
 

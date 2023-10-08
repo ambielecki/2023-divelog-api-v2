@@ -31,5 +31,21 @@ class HomePageTest extends TestCase
         $original_page = HomePage::factory()->create([
             'is_active' => 1,
         ]);
+
+        $new_page = HomePage::setHomePage([
+            'page' => [
+                'content' => [
+                    'content' => fake()->paragraphs(3),
+                    'title' => fake()->sentence,
+                ]
+            ]
+        ]);
+
+        $home_page = HomePage::query()->where('is_active', 1)->get();
+
+        $this->assertEquals(1, $home_page->count());
+        $this->assertEquals($new_page->id, $home_page[0]->id);
+        $this->assertEquals(2, $home_page[0]->revision);
+        $this->assertEquals($original_page->id, $home_page[0]->parent_id);
     }
 }
