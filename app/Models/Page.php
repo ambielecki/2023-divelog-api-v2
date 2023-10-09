@@ -2,10 +2,7 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-
-class Page extends Model
-{
+class Page extends PaginatedModel {
     protected $table = 'pages';
     protected $fillable = ['page_type', 'slug', 'title', 'content', 'is_active', 'revision', 'parent_id'];
 

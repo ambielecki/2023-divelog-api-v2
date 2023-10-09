@@ -18,6 +18,10 @@ Route::get('/', function (\Illuminate\Http\Request $request) {
     return response()->json(\App\Library\JsonResponseData::formatData($request, 'Health OK'));
 });
 
+if (config('app.env') === 'local') {
+    Route::get('/test', [Controllers\TestController::class, 'getTest']);
+}
+
 Route::post('/register', [Controllers\ApiAuthController::class, 'postRegister']);
 Route::post('/login', [Controllers\ApiAuthController::class, 'postLogin']);
 Route::post('/refresh', [Controllers\ApiAuthController::class, 'postRefresh']);
@@ -37,6 +41,7 @@ Route::group(['middleware' => ['auth:api']], function () {
 
     Route::group(['middleware' => ['admin'], 'prefix' => '/admin'], function () {
         Route::post('home', [Controllers\PageController::class, 'postHomePage']);
+        Route::post('blog', [Controllers\PageController::class, 'postBlogPage']);
 
         Route::group(['prefix' => '/image'], function () {
             Route::get('/', [Controllers\ImageController::class, 'getIndex']);
@@ -52,4 +57,9 @@ Route::group(['middleware' => ['auth:api']], function () {
 
 Route::get('/dive-calculation', [Controllers\DiveCalculatorController::class, 'getCalculation']);
 Route::get('/page/home', [Controllers\PageController::class, 'getHomePage']);
-Route::get('/page/{id}', [Controllers\PageController::class, 'getPage']);
+
+Route::group(['prefix' => 'blog'], function () {
+    Route::get('/{slug}', [Controllers\PageController::class, 'getBlogPage']);
+    Route::get('/', [Controllers\PageController::class, 'getBlogList']);
+});
+

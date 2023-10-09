@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 abstract class PaginatedModel extends Model {
     const DEFAULT_SORT_FIELD = 'created_at';
     const DEFAULT_SORT_DIRECTION = 'DESC';
+    const DEFAULT_LIMIT = 20;
 
     protected array $allowed_sorts = [
         'created_at' => 1,
@@ -24,11 +25,11 @@ abstract class PaginatedModel extends Model {
 
     public function getPaginatedResults(Request $request): array {
         $page = (int) $request->input('page') ?: 1;
-        $limit = (int) $request->input('limit') ?: 20;
+        $limit = (int) $request->input('limit') ?: static::DEFAULT_LIMIT;
 
         $skip = ($page - 1) * $limit;
-        $sort = self::DEFAULT_SORT_FIELD;
-        $sort_direction = self::DEFAULT_SORT_DIRECTION;
+        $sort = static::DEFAULT_SORT_FIELD;
+        $sort_direction = static::DEFAULT_SORT_DIRECTION;
 
         if ($request->input('sort') && isset($this->allowed_sorts[$request->input('sort')])) {
             $sort = $request->input('sort');
@@ -38,7 +39,7 @@ abstract class PaginatedModel extends Model {
             $sort_direction = strtoupper($request->input('sort_direction'));
         }
 
-        $query = self::query();
+        $query = static::query();
         $query = $this->addRelations($query, $request);
         $query = $this->addUser($query, $request);
         $query = $this->addWheres($query, $request);
@@ -58,6 +59,7 @@ abstract class PaginatedModel extends Model {
             'page'  => $page,
             'pages' => ceil($count / $limit),
             'limit' => $limit,
+            'count' => $count,
         ];
     }
 
