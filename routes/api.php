@@ -40,6 +40,8 @@ Route::group(['middleware' => ['auth:api']], function () {
     });
 
     Route::group(['middleware' => ['admin'], 'prefix' => '/admin'], function () {
+        Route::get('logs', [\Rap2hpoutre\LaravelLogViewer\LogViewerController::class, 'index']);
+
         Route::post('home', [Controllers\PageController::class, 'postHomePage']);
         Route::post('blog', [Controllers\PageController::class, 'postBlogPage']);
 

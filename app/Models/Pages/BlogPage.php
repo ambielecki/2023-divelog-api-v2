@@ -40,17 +40,19 @@ class BlogPage extends Page {
         $blog_content = $content['content'];
         $content['images'] = [];
         preg_match_all(ShortTags::IMAGE_REGEX, $blog_content, $image_matches);
+        preg_match(static::PARAGRAPH_REGEX, $blog_content, $paragraph_match);
         if (isset($image_matches[1])) {
-            $images = Image::whereIn('id', $image_matches[1])->get()->keyBy('id');
+            $images = Image::whereIn('id', $image_matches[1])->get();
             foreach ($image_matches[0] as $key => $to_replace) {
                 $image_id = (int) $image_matches[1][$key];
-                $image = $images[$image_id];
+                $image = $images->first(fn ($image) => $image_id === $image->id);
                 $replacement = $this->getImageHtml($image);
                 $blog_content = str_replace($to_replace, $replacement, $blog_content);
             }
             $content['images'] = $images;
         }
 
+        $content['first_paragraph'] = $paragraph_match[0] ?? '';
         $content['content_with_images'] = $blog_content;
 
         return $content;
