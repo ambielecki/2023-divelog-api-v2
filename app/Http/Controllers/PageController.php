@@ -37,7 +37,29 @@ class PageController extends Controller {
     }
 
     public function getBlogPage(Request $request, string $slug): JsonResponse {
-        return response()->json([]);
+        $blog_page = BlogPage::query()
+            ->where([
+                ['slug', $slug],
+                ['is_active', true],
+            ])
+            ->orderBy('revision', 'DESC')
+            ->first();
+
+        if ($blog_page) {
+            return response()->json(JsonResponseData::formatData(
+                $request,
+                '',
+                Message::MESSAGE_OK,
+                ['blog_page' => $blog_page]
+            ));
+        }
+
+        return response()->json(JsonResponseData::formatData(
+            $request,
+            'We could not find the blog you requested',
+            Message::MESSAGE_WARNING,
+            ['blog_page' => $blog_page]
+        ), 404);
     }
 
     public function getBlogList(Request $request): JsonResponse {
