@@ -16,11 +16,12 @@ class BlogPageSeeder extends Seeder
     {
         for ($i = 0; $i < 20; $i++) {
             $title = fake()->words(3, true);
+            $paragraph = fake()->paragraph;
             $blog = new BlogPage();
             $blog->title = $title;
             $blog->content = [
-                'title' => fake()->sentence,
-                'content' => fake()->paragraph,
+                'title' => $title,
+                'content' => "<p>$paragraph</p>",
             ];
             $blog->is_active = true;
             $blog->revision = 1;
