@@ -25,6 +25,8 @@ if (config('app.env') === 'local') {
 Route::post('/register', [Controllers\ApiAuthController::class, 'postRegister']);
 Route::post('/login', [Controllers\ApiAuthController::class, 'postLogin']);
 Route::post('/refresh', [Controllers\ApiAuthController::class, 'postRefresh']);
+Route::post('/request-password-reset', [Controllers\ApiAuthController::class, 'postRequestPasswordReset']);
+Route::post('/password-reset', [Controllers\ApiAuthController::class, 'postResetPassword'])->name('password.reset');
 
 Route::group(['middleware' => ['auth:api']], function () {
     Route::get('/user', [Controllers\ApiUserController::class, 'getUser']);

@@ -3,13 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\RegisterRequest;
+use App\Http\Requests\ResetPasswordRequest;
 use App\Library\JsonResponseData;
 use App\Library\Message;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Tymon\JWTAuth;
+use Illuminate\Support\Facades\Password;
 
 class ApiAuthController extends Controller
 {
@@ -103,5 +104,31 @@ class ApiAuthController extends Controller
             $message_type,
             $data,
         ));
+    }
+
+    public function postRequestPasswordReset(ResetPasswordRequest $request): JsonResponse {
+        $status = Password::sendResetLink(
+            $request->only('email')
+        );
+
+        if ($status === Password::RESET_LINK_SENT) {
+            return response()->json(JsonResponseData::formatData(
+                $request,
+                __($status),
+                Message::MESSAGE_SUCCESS,
+                [],
+            ));
+        }
+
+        return response()->json(JsonResponseData::formatData(
+            $request,
+            __($status),
+            Message::MESSAGE_ERROR,
+            [],
+        ), 500);
+    }
+
+    public function postResetPassword(Request $request): JsonResponse {
+        return response()->json();
     }
 }
