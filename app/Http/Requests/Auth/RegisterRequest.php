@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Auth;
 
 use App\Library\JsonResponseData;
 use App\Library\Message;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class DiveCalculatorRequest extends FormRequest
+class RegisterRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,18 +26,13 @@ class DiveCalculatorRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'dive_1_depth'     => 'numeric|nullable',
-            'dive_1_time'      => 'numeric|nullable',
-            'surface_interval' => 'numeric|nullable',
-            'dive_2_depth'     => 'numeric|nullable',
-            'dive_2_time'      => 'numeric|nullable',
+            'first_name' => 'string|required',
+            'last_name' => 'string|required',
+            'email' => 'email|required',
+            'password' => 'min:8|required|confirmed',
         ];
     }
 
-    /*
-     * from: https://omidioraemmanuel.medium.com/how-to-return-json-from-laravel-form-request-validation-errors-d3c419cce8e0
-     * forces all responses to json for validation - does not need Accepts: application/json header
-     */
     protected function failedValidation(Validator $validator) {
         throw new HttpResponseException(response()->json(
             JsonResponseData::formatData(
@@ -48,6 +43,6 @@ class DiveCalculatorRequest extends FormRequest
                     'errors' => $validator->errors(),
                     'status' => true,
                 ])
-        , 422));
+            , 422));
     }
 }

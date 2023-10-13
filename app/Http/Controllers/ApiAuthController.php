@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\RegisterRequest;
-use App\Http\Requests\ResetPasswordRequest;
+use App\Http\Requests\Auth\RegisterRequest;
+use App\Http\Requests\Auth\RequestPasswordResetRequest;
+use App\Http\Requests\Auth\ResetPasswordRequest;
 use App\Library\JsonResponseData;
 use App\Library\Message;
 use App\Models\User;
@@ -11,6 +12,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Support\Str;
 
 class ApiAuthController extends Controller
 {
@@ -106,7 +109,7 @@ class ApiAuthController extends Controller
         ));
     }
 
-    public function postRequestPasswordReset(ResetPasswordRequest $request): JsonResponse {
+    public function postRequestPasswordReset(RequestPasswordResetRequest $request): JsonResponse {
         $status = Password::sendResetLink(
             $request->only('email')
         );
@@ -128,7 +131,34 @@ class ApiAuthController extends Controller
         ), 500);
     }
 
-    public function postResetPassword(Request $request): JsonResponse {
-        return response()->json();
+    public function postResetPassword(ResetPasswordRequest $request): JsonResponse {
+        $status = Password::reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function (User $user, string $password) {
+                $user->forceFill([
+                    'password' => Hash::make($password)
+                ])->setRememberToken(Str::random(60));
+
+                $user->save();
+
+                event(new PasswordReset($user));
+            }
+        );
+
+        if ($status === Password::PASSWORD_RESET) {
+            return response()->json(JsonResponseData::formatData(
+                $request,
+                __($status),
+                Message::MESSAGE_SUCCESS,
+                [],
+            ));
+        }
+
+        return response()->json(JsonResponseData::formatData(
+            $request,
+            __($status),
+            Message::MESSAGE_ERROR,
+            [],
+        ), 500);
     }
 }

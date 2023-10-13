@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\DiveCalculatorRequest;
+use App\Http\Requests\Auth\DiveCalculatorRequest;
 use App\Library\DiveCalculator;
 use App\Library\JsonResponseData;
 use App\Library\Message;
