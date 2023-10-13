@@ -19,7 +19,7 @@ class ImageCreateRequest extends FormRequest {
             'alt_tag'     => 'string|required|max:140',
             'description' => 'string|required|max:140',
             'is_hero'     => 'boolean|required',
-            'tags'        => 'string|max:100',
+            'tags'        => 'string|max:100|nullable',
         ];
     }
 
