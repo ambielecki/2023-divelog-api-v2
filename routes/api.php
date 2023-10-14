@@ -39,6 +39,7 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::get('/max-dive', [Controllers\DiveLogController::class, 'getMaxDive']);
         Route::get('/{id}', [Controllers\DiveLogController::class, 'getDetails']);
         Route::put('/{id}', [Controllers\DiveLogController::class, 'updateDetails']);
+        Route::delete('/{id}', [Controllers\DiveLogController::class, 'delete']);
     });
 
     Route::group(['middleware' => ['admin'], 'prefix' => '/admin'], function () {

@@ -126,4 +126,40 @@ class DiveLogController extends Controller {
             [],
         ), 500);
     }
+
+    public function delete(Request $request, $id): JsonResponse {
+        $log = DiveLog::find($id);
+        if (!$log) {
+            return response()->json(JsonResponseData::formatData(
+                $request,
+                'Dive log not found',
+                Message::MESSAGE_WARNING,
+                [],
+            ), 404);
+        }
+
+        $user = $request->user();
+
+        if ($user->cannot('delete', $log)) {
+            return response()->json(JsonResponseData::formatData(
+                $request,
+                'You are not authorized to delete this log',
+                Message::MESSAGE_WARNING,
+                [],
+            ), 403);
+        }
+
+        if ($log->delete()) {
+            return response()->json(JsonResponseData::formatData(
+                $request
+            ));
+        }
+
+        return response()->json(JsonResponseData::formatData(
+            $request,
+            'Something went wrong deleting log, please try again later',
+            Message::MESSAGE_ERROR,
+            [],
+        ), 500);
+    }
 }
