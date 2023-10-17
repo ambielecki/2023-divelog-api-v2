@@ -110,6 +110,11 @@ class BlogPage extends Page {
     }
 
     public function addWheres(Builder $query, Request $request): Builder {
+        if ($request->path() === 'api/admin/blog') {
+            return $query->where([
+                ['is_active', 1],
+            ]);
+        }
         return $query->where([
             ['is_active', 1],
             ['is_published', 1]

@@ -73,6 +73,17 @@ class PageController extends Controller {
         ));
     }
 
+    public function getActiveBlogList(Request $request): JsonResponse {
+        $blog = new BlogPage();
+
+        return response()->json(JsonResponseData::formatData(
+            $request,
+            '',
+            Message::MESSAGE_OK,
+            $blog->getPaginatedResults($request),
+        ));
+    }
+
     public function postBlogPage(HomePageEditRequest $request): JsonResponse {
         $blog_page = BlogPage::createBlogEntry($request->all());
 
