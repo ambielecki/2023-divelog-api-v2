@@ -64,6 +64,7 @@ class BlogPage extends Page {
         $blog = new self();
         $blog->revision = 1;
         $blog->is_active = 1;
+        $blog->is_published = 1;
         $blog->title = $request_data['page']['content']['title'];
         $blog->slug = $slug;
         $blog->content = $request_data['page']['content'];
@@ -109,6 +110,9 @@ class BlogPage extends Page {
     }
 
     public function addWheres(Builder $query, Request $request): Builder {
-        return $query->where('is_active', 1);
+        return $query->where([
+            ['is_active', 1],
+            ['is_published', 1]
+        ]);
     }
 }

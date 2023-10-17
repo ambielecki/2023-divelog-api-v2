@@ -61,6 +61,7 @@ Route::group(['middleware' => ['auth:api']], function () {
 });
 
 Route::get('/dive-calculation', [Controllers\DiveCalculatorController::class, 'getCalculation']);
+Route::get('/dive-tables', [Controllers\DiveCalculatorController::class, 'getTableData']);
 Route::get('/page/home', [Controllers\PageController::class, 'getHomePage']);
 
 Route::group(['prefix' => 'blog'], function () {

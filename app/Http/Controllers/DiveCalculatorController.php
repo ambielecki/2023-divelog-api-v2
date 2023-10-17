@@ -7,6 +7,7 @@ use App\Library\DiveCalculator;
 use App\Library\JsonResponseData;
 use App\Library\Message;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class DiveCalculatorController extends Controller {
     public function getCalculation(DiveCalculatorRequest $request): JsonResponse {
@@ -22,5 +23,24 @@ class DiveCalculatorController extends Controller {
         return response()->json(
             JsonResponseData::formatData($request, 'DiveCalculation', Message::MESSAGE_OK, $calculation)
         );
+    }
+
+    public function getTableData(Request $request): JsonResponse {
+        $dive_calculator = new DiveCalculator();
+
+        return response()->json(JsonResponseData::formatData(
+            $request,
+            '',
+            Message::MESSAGE_OK,
+            [
+                'dive_tables' => [
+                    'depths'      => $dive_calculator->getTableDepths(),
+                    'groups'      => $dive_calculator->getTableGroups(),
+                    'table_one'   => $dive_calculator->getTableOne(),
+                    'table_two'   => $dive_calculator->getTableTwo(),
+                    'table_three' => $dive_calculator->getTableThree(),
+                ],
+            ],
+        ));
     }
 }

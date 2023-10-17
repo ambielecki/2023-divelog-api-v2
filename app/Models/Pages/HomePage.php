@@ -68,11 +68,15 @@ class HomePage extends Page {
 
         DB::beginTransaction();
 
-        HomePage::query()->update(['is_active' => 0]);
+        HomePage::query()->update([
+            'is_active'    => 0,
+            'is_published' => 0,
+        ]);
 
         $home_page = self::create(array_merge([
-            'is_active' => true,
-            'content'   => [
+            'is_active'    => true,
+            'is_published' => true,
+            'content'      => [
                 'content'           => $request_data['page']['content']['content'],
                 'image_description' => $request_data['page']['content']['image_description'] ?? '',
                 'title'             => $request_data['page']['content']['title'],
