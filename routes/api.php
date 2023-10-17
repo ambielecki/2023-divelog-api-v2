@@ -46,8 +46,12 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::get('logs', [\Rap2hpoutre\LaravelLogViewer\LogViewerController::class, 'index']);
 
         Route::post('home', [Controllers\PageController::class, 'postHomePage']);
-        Route::get('blog', [Controllers\PageController::class, 'getActiveBlogList']);
-        Route::post('blog', [Controllers\PageController::class, 'postBlogPage']);
+
+        Route::group(['prefix' => '/blog'], function () {
+            Route::get('/{id}', [Controllers\PageController::class, 'getBlogById']);
+            Route::get('/', [Controllers\PageController::class, 'getActiveBlogList']);
+            Route::post('/', [Controllers\PageController::class, 'postBlogPage']);
+        });
 
         Route::group(['prefix' => '/image'], function () {
             Route::get('/', [Controllers\ImageController::class, 'getIndex']);

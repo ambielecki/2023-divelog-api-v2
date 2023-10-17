@@ -62,6 +62,31 @@ class PageController extends Controller {
         ), 404);
     }
 
+    public function getBlogById(Request $request, $id): JsonResponse {
+        $blog_page = BlogPage::query()
+            ->where([
+                ['id', $id],
+            ])
+            ->orderBy('revision', 'DESC')
+            ->first();
+
+        if ($blog_page) {
+            return response()->json(JsonResponseData::formatData(
+                $request,
+                '',
+                Message::MESSAGE_OK,
+                ['blog_page' => $blog_page]
+            ));
+        }
+
+        return response()->json(JsonResponseData::formatData(
+            $request,
+            'We could not find the blog you requested',
+            Message::MESSAGE_WARNING,
+            ['blog_page' => $blog_page]
+        ), 404);
+    }
+
     public function getBlogList(Request $request): JsonResponse {
         $blog = new BlogPage();
 
