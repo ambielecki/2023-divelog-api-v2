@@ -115,6 +115,11 @@ class BlogPage extends Page {
                 ['is_active', 1],
             ]);
         }
+
+        if (str_contains($request->path(), 'api/admin/blog/revisions')) {
+            return $query->where('parent_id', $request->input('parent_id'));
+        }
+
         return $query->where([
             ['is_active', 1],
             ['is_published', 1]

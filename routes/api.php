@@ -48,6 +48,7 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::post('home', [Controllers\PageController::class, 'postHomePage']);
 
         Route::group(['prefix' => '/blog'], function () {
+            Route::get('/revisions', [Controllers\PageController::class, 'getBlogRevisions']);
             Route::get('/{id}', [Controllers\PageController::class, 'getBlogById']);
             Route::get('/', [Controllers\PageController::class, 'getActiveBlogList']);
             Route::post('/', [Controllers\PageController::class, 'postBlogPage']);

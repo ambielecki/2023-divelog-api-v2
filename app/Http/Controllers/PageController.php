@@ -109,6 +109,18 @@ class PageController extends Controller {
         ));
     }
 
+    public function getBlogRevisions(Request $request): JsonResponse {
+        $blog = new BlogPage();
+        $request->mergeIfMissing(['sort' => 'created_at']);
+
+        return response()->json(JsonResponseData::formatData(
+            $request,
+            '',
+            Message::MESSAGE_OK,
+            $blog->getPaginatedResults($request),
+        ));
+    }
+
     public function postBlogPage(HomePageEditRequest $request): JsonResponse {
         $blog_page = BlogPage::createBlogEntry($request->all());
 
