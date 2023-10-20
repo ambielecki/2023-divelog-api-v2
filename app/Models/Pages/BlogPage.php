@@ -9,6 +9,7 @@ use App\Scopes\BlogPageScope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class BlogPage extends Page {
     use HasFactory;
@@ -64,13 +65,45 @@ class BlogPage extends Page {
         $blog = new self();
         $blog->revision = 1;
         $blog->is_active = 1;
-        $blog->is_published = 1;
+        $blog->is_published = $request_data['page']['is_published'] ?? 1;
         $blog->title = $request_data['page']['content']['title'];
         $blog->slug = $slug;
         $blog->content = $request_data['page']['content'];
         $blog->save();
         $blog->parent_id = $blog->id;
         $blog->save();
+
+        return $blog;
+    }
+
+    public static function createBlogRevision(array $request_data, $parent_id): self {
+        $parent_blog = self::query()
+            ->orderBy('revision', 'DESC')
+            ->where('parent_id', $parent_id)
+            ->first();
+
+        $slug = $parent_blog->slug;
+
+        DB::beginTransaction();
+
+        BlogPage::query()
+            ->where('parent_id', $parent_id)
+            ->update([
+                'is_active'    => 0,
+                'is_published' => 0,
+            ]);
+
+        $blog = new self();
+        $blog->revision = $parent_blog->revision + 1;
+        $blog->is_active = 1;
+        $blog->is_published = $request_data['page']['is_published'] ?? 1;
+        $blog->title = $request_data['page']['content']['title'];
+        $blog->slug = $slug;
+        $blog->content = $request_data['page']['content'];
+        $blog->parent_id = $parent_id;
+        $blog->save();
+
+        DB::commit();
 
         return $blog;
     }

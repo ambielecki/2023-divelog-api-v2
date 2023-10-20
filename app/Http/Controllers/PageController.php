@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Page\BlogPageEditRequest;
 use App\Http\Requests\Page\HomePageEditRequest;
 use App\Library\JsonResponseData;
 use App\Library\Message;
@@ -123,6 +124,17 @@ class PageController extends Controller {
 
     public function postBlogPage(HomePageEditRequest $request): JsonResponse {
         $blog_page = BlogPage::createBlogEntry($request->all());
+
+        return response()->json(JsonResponseData::formatData(
+            $request,
+            'Blog Entry Created',
+            Message::MESSAGE_OK,
+            ['blog' => $blog_page],
+        ));
+    }
+
+    public function postBlogRevision(BlogPageEditRequest $request, $parent_id): JsonResponse {
+        $blog_page = BlogPage::createBlogRevision($request->all(), $parent_id);
 
         return response()->json(JsonResponseData::formatData(
             $request,
