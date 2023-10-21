@@ -26,7 +26,7 @@ class DiveLogRequest extends FormRequest {
             'dive_number'          => 'numeric',
             'location'             => 'string|max:255',
             'dive_site'            => 'string|max:255',
-            'buddy'                => 'string|max:255',
+            'buddy'                => 'string|max:255|nullable',
             'date_time'            => 'date',
             'max_depth_ft'         => 'numeric',
             'bottom_time_min'      => 'numeric',

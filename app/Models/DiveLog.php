@@ -43,7 +43,7 @@ class DiveLog extends PaginatedModel {
         $this->used_computer = $request->input('used_computer');
         $this->description = $request->input('description');
         $this->notes = $request->input('notes');
-        $this->dive_details = [];
-        $this->equipment_details = [];
+        $this->dive_details = $request->input('dive_details');
+        $this->equipment_details = $request->input('equipment_details');
     }
 }
