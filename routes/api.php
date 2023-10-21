@@ -64,6 +64,11 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::group(['prefix' => 'tag'], function () {
             Route::get('/', [Controllers\TagController::class, 'getIndex']);
         });
+
+        Route::group(['prefix' => 'reports'], function () {
+            Route::get('/users', [Controllers\ReportController::class, 'getUserReport']);
+            Route::get('/logs', [Controllers\ReportController::class, 'getDiveLogReport']);
+        });
     });
 });
 
