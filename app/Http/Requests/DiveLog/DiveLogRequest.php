@@ -30,7 +30,7 @@ class DiveLogRequest extends FormRequest {
             'date_time'            => 'date',
             'max_depth_ft'         => 'numeric',
             'bottom_time_min'      => 'numeric',
-            'surface_interval_min' => 'numeric',
+            'surface_interval_min' => 'numeric|nullable',
             'used_computer'        => 'boolean',
             'description'          => 'string|max:2000|nullable',
             'notes'                => 'string|max:2000|nullable',

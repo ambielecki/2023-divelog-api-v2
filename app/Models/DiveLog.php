@@ -39,7 +39,7 @@ class DiveLog extends PaginatedModel {
         $this->date_time = date('Y-m-d H:i:s', strtotime($request->input('date_time')));
         $this->max_depth_ft = $request->input('max_depth_ft');
         $this->bottom_time_min = $request->input('bottom_time_min');
-        $this->surface_interval_min = $request->input('surface_interval_min');
+        $this->surface_interval_min = $request->input('surface_interval_min') ?? 0;
         $this->used_computer = $request->input('used_computer');
         $this->description = $request->input('description');
         $this->notes = $request->input('notes');
